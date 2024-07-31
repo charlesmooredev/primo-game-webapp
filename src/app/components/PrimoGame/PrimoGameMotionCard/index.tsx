@@ -22,7 +22,8 @@ export function PrimoGameMotionCard({
   children,
 }: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const pickedAudioRef = useRef<HTMLAudioElement | null>(null);
+  const winnerAudioRef = useRef<HTMLAudioElement | null>(null);
+  const loserAudioRef = useRef<HTMLAudioElement | null>(null);
 
   const isPrime = useCallback((num: number) => {
     if (num <= 1) return false;
@@ -33,6 +34,20 @@ export function PrimoGameMotionCard({
     }
     return true;
   }, []);
+
+  const animationCompleteFn = useCallback(() => {
+    containerRef.current!.scrollTo({
+      left: targetX,
+      behavior: "smooth",
+    });
+    setTimeout(() => {
+      isPrime(winningNumber)
+        ? winnerAudioRef.current?.play().then()
+        : loserAudioRef.current?.play().then();
+      setIsAnimating(false);
+      setResult(isPrime(winningNumber) ? PrimoResults.Won : PrimoResults.Lost);
+    }, TIMER);
+  }, [isPrime, setIsAnimating, setResult, targetX, winningNumber]);
 
   if (winningNumber === 0 && !isAnimating) return <div className="h-[250px]" />;
 
@@ -46,20 +61,8 @@ export function PrimoGameMotionCard({
           className="h-[250px]"
           initial={{ x: 0 }}
           animate={{ x: isAnimating ? -totalWidth : targetX }}
-          transition={{ duration: 1, ease: "easeInOut" }} // Adjusted the duration to 1 second
-          onAnimationComplete={() => {
-            containerRef.current!.scrollTo({
-              left: targetX,
-              behavior: "smooth",
-            });
-            setTimeout(() => {
-              pickedAudioRef.current?.play().then();
-              setIsAnimating(false);
-              setResult(
-                isPrime(winningNumber) ? PrimoResults.Won : PrimoResults.Lost
-              );
-            }, TIMER);
-          }}
+          transition={{ duration: 1, ease: "easeInOut" }}
+          onAnimationComplete={animationCompleteFn}
           style={{
             display: "flex",
             width: `${totalWidth * 3}px`, // Triple width to simulate infinite loop
@@ -68,8 +71,11 @@ export function PrimoGameMotionCard({
           {children}
         </motion.div>
       </div>
-      <audio ref={pickedAudioRef}>
-        <source src="/assets/picked.mp3" />
+      <audio ref={winnerAudioRef}>
+        <source src="/assets/win.mp3" />
+      </audio>
+      <audio ref={loserAudioRef}>
+        <source src="/assets/lose.mp3" />
       </audio>
     </>
   );
