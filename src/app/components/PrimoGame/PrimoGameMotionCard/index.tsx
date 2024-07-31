@@ -1,6 +1,11 @@
-import { PrimoResults, TIMER } from "../../../helpers/primoGameRules.ts";
+import {
+  PrimoResults,
+  prizeWidth,
+  TIMER,
+} from "../../../helpers/primoGameRules.ts";
 import { ReactNode, useCallback, useRef } from "react";
 import { motion } from "framer-motion";
+import { CheckIsPrime } from "../../../helpers/CheckIsPrime.tsx";
 
 interface Props {
   isAnimating: boolean;
@@ -24,22 +29,10 @@ export function PrimoGameMotionCard({
   const containerRef = useRef<HTMLDivElement | null>(null);
   const winnerAudioRef = useRef<HTMLAudioElement | null>(null);
   const loserAudioRef = useRef<HTMLAudioElement | null>(null);
-
-  const isPrime = useCallback((num: number) => {
-    if (num <= 1) return false;
-    if (num <= 3) return true;
-    if (num % 2 === 0 || num % 3 === 0) return false;
-    for (let i = 5; i * i <= num; i += 6) {
-      if (num % i === 0 || num % (i + 2) === 0) return false;
-    }
-    return true;
-  }, []);
+  const spinAudioRef = useRef<HTMLAudioElement | null>(null);
+  const isPrime = CheckIsPrime();
 
   const animationCompleteFn = useCallback(() => {
-    containerRef.current!.scrollTo({
-      left: targetX,
-      behavior: "smooth",
-    });
     setTimeout(() => {
       isPrime(winningNumber)
         ? winnerAudioRef.current?.play().then()
@@ -47,7 +40,20 @@ export function PrimoGameMotionCard({
       setIsAnimating(false);
       setResult(isPrime(winningNumber) ? PrimoResults.Won : PrimoResults.Lost);
     }, TIMER);
-  }, [isPrime, setIsAnimating, setResult, targetX, winningNumber]);
+  }, [isPrime, setIsAnimating, setResult, winningNumber]);
+
+  const lastPositionRef = useRef(0);
+
+  const handleUpdate = useCallback((latest: { x: number }) => {
+    const currentPosition = Math.abs(latest.x);
+    const blockIndex = Math.floor(currentPosition / prizeWidth);
+    const lastBlockIndex = Math.floor(lastPositionRef.current / prizeWidth);
+
+    if (blockIndex !== lastBlockIndex) {
+      spinAudioRef.current?.play().then();
+    }
+    lastPositionRef.current = currentPosition;
+  }, []);
 
   if (winningNumber === 0 && !isAnimating) return <div className="h-[250px]" />;
 
@@ -60,8 +66,9 @@ export function PrimoGameMotionCard({
         <motion.div
           className="h-[250px]"
           initial={{ x: 0 }}
-          animate={{ x: isAnimating ? -totalWidth : targetX }}
+          animate={isAnimating ? { x: -totalWidth } : { x: targetX }}
           transition={{ duration: 1, ease: "easeInOut" }}
+          onUpdate={handleUpdate}
           onAnimationComplete={animationCompleteFn}
           style={{
             display: "flex",
@@ -71,6 +78,9 @@ export function PrimoGameMotionCard({
           {children}
         </motion.div>
       </div>
+      <audio ref={spinAudioRef}>
+        <source src="/assets/spin.mp3" />
+      </audio>
       <audio ref={winnerAudioRef}>
         <source src="/assets/win.mp3" />
       </audio>
