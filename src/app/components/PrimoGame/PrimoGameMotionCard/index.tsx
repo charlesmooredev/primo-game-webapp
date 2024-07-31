@@ -66,7 +66,7 @@ export function PrimoGameMotionCard({
         <motion.div
           className="h-[250px] flex items-center"
           initial={{ x: 0 }}
-          animate={{ x: isAnimating ? targetX * 2 : targetX }}
+          animate={{ x: targetX }}
           transition={{ duration: 1.5, ease: "easeInOut" }}
           onUpdate={handleUpdate}
           onAnimationComplete={animationCompleteFn}
