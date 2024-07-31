@@ -68,11 +68,9 @@ export function PrimoGame() {
 
   useEffect(() => {
     if (containerRef.current) {
-      setInterval(() => {
-        setContainerWidth(containerRef.current?.clientWidth || 0);
-      }, 500);
+      setContainerWidth(containerRef.current?.clientWidth || 0);
     }
-  }, [containerRef.current?.clientWidth]);
+  }, []);
 
   return (
     <AppWrapper>

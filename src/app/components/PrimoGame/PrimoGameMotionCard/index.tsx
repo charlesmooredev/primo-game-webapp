@@ -67,7 +67,7 @@ export function PrimoGameMotionCard({
           className="h-[250px]"
           initial={{ x: 0 }}
           animate={{ x: targetX }}
-          transition={{ duration: 2.5, ease: "easeInOut" }}
+          transition={{ duration: 1.5, ease: "easeInOut" }}
           onUpdate={handleUpdate}
           onAnimationComplete={animationCompleteFn}
           style={{
