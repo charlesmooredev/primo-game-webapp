@@ -15,12 +15,29 @@ const generateRandomNumber = (min: number, max: number) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
+function shuffleArray<T>(array: T[]): T[] {
+  const shuffledArray = [...array];
+  for (let i = shuffledArray.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffledArray[i], shuffledArray[j]] = [shuffledArray[j], shuffledArray[i]];
+  }
+  return shuffledArray;
+}
+
+function generateRandomizedPrizes<T>(array: T[], repetitions: number): T[] {
+  const shuffledArray = shuffleArray(array);
+  return Array(repetitions).fill(shuffledArray).flat();
+}
+
 export function PrimoGame() {
   const [winningNumber, setWinningNumber] = useState<number>(0);
   const [isAnimating, setIsAnimating] = useState<boolean>(false);
   const [containerWidth, setContainerWidth] = useState<number>(0);
   const [result, setResult] = useState<PrimoResults | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const [randomizedPrizes, setRandomizedPrizes] = useState(() =>
+    generateRandomizedPrizes(primoPrizesArray, 6)
+  );
 
   const handleStartAnimation = useCallback(() => {
     if (isAnimating) return;
@@ -30,19 +47,21 @@ export function PrimoGame() {
     setWinningNumber(newWinningNumber);
     setIsAnimating(true);
 
+    setRandomizedPrizes(generateRandomizedPrizes(primoPrizesArray, 6));
+
     setTimeout(() => {
       setIsAnimating(false);
     }, TIMER);
   }, [isAnimating]);
 
-  const winningIndex = primoPrizesArray
+  const winningIndex = randomizedPrizes
     .map((num) => num.id)
     .indexOf(winningNumber);
 
-  const totalWidth = primoPrizesArray.length * prizeWidth;
+  const totalWidth = randomizedPrizes.length * prizeWidth;
 
   const targetX = -(
-    (winningIndex + primoPrizesArray.length) * prizeWidth -
+    winningIndex * prizeWidth -
     containerWidth / 2 +
     prizeWidth / 2
   );
@@ -53,7 +72,7 @@ export function PrimoGame() {
         setContainerWidth(containerRef.current?.clientWidth || 0);
       }, 500);
     }
-  }, []);
+  }, [containerRef.current?.clientWidth]);
 
   return (
     <AppWrapper>
@@ -70,14 +89,7 @@ export function PrimoGame() {
           setIsAnimating={(e) => setIsAnimating(e)}
           winningNumber={winningNumber}
         >
-          {[
-            ...primoPrizesArray,
-            ...primoPrizesArray,
-            ...primoPrizesArray,
-            ...primoPrizesArray,
-            ...primoPrizesArray,
-            ...primoPrizesArray,
-          ].map((number, index) => (
+          {randomizedPrizes.map((number, index) => (
             <Fragment key={index}>
               <PrimoGameBlock
                 itemWidth={prizeWidth}

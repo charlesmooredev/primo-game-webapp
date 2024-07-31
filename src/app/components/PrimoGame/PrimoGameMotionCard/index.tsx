@@ -66,13 +66,13 @@ export function PrimoGameMotionCard({
         <motion.div
           className="h-[250px]"
           initial={{ x: 0 }}
-          animate={isAnimating ? { x: -totalWidth } : { x: targetX }}
-          transition={{ duration: 1, ease: "easeInOut" }}
+          animate={{ x: targetX }}
+          transition={{ duration: 2.5, ease: "easeInOut" }}
           onUpdate={handleUpdate}
           onAnimationComplete={animationCompleteFn}
           style={{
             display: "flex",
-            width: `${totalWidth * 3}px`, // Triple width to simulate infinite loop
+            width: `${totalWidth * 2}px`,
           }}
         >
           {children}
