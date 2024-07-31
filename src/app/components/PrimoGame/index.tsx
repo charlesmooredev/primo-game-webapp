@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useState } from "react";
+import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 import { AppWrapper } from "../AppWrapper";
 import { CaretDownFill, CaretUpFill } from "react-bootstrap-icons";
 import { primoPrizesArray } from "../../helpers/primoPrizes.tsx";
@@ -20,6 +20,7 @@ export function PrimoGame() {
   const [isAnimating, setIsAnimating] = useState<boolean>(false);
   const [containerWidth, setContainerWidth] = useState<number>(0);
   const [result, setResult] = useState<PrimoResults | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
   const handleStartAnimation = useCallback(() => {
     if (isAnimating) return;
@@ -46,9 +47,20 @@ export function PrimoGame() {
     prizeWidth / 2
   );
 
+  useEffect(() => {
+    if (containerRef.current) {
+      setInterval(() => {
+        setContainerWidth(containerRef.current?.clientWidth || 0);
+      }, 500);
+    }
+  }, []);
+
   return (
     <AppWrapper>
-      <div className="flex items-center flex-col space-y-[10px]">
+      <div
+        className="flex items-center flex-col w-full space-y-[10px]"
+        ref={containerRef}
+      >
         <CaretDownFill size={25} />
         <PrimoGameMotionCard
           isAnimating={isAnimating}
@@ -56,7 +68,6 @@ export function PrimoGame() {
           targetX={targetX}
           setResult={(e) => setResult(e)}
           setIsAnimating={(e) => setIsAnimating(e)}
-          setContainerWidth={(e) => setContainerWidth(e)}
           winningNumber={winningNumber}
         >
           {[

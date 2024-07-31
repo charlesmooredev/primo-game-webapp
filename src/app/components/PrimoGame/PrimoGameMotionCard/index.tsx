@@ -1,5 +1,5 @@
 import { PrimoResults, TIMER } from "../../../helpers/primoGameRules.ts";
-import { ReactNode, useCallback, useEffect, useRef } from "react";
+import { ReactNode, useCallback, useRef } from "react";
 import { motion } from "framer-motion";
 
 interface Props {
@@ -8,7 +8,6 @@ interface Props {
   targetX: number;
   setResult: (result: PrimoResults) => void;
   setIsAnimating: (isAnimating: boolean) => void;
-  setContainerWidth: (width: number) => void;
   children: ReactNode | ReactNode[];
   winningNumber: number;
 }
@@ -20,7 +19,6 @@ export function PrimoGameMotionCard({
   isAnimating,
   targetX,
   winningNumber,
-  setContainerWidth,
   children,
 }: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -35,12 +33,6 @@ export function PrimoGameMotionCard({
     }
     return true;
   }, []);
-
-  useEffect(() => {
-    if (containerRef.current) {
-      setContainerWidth(containerRef.current?.offsetWidth || 0);
-    }
-  }, [setContainerWidth]);
 
   if (winningNumber === 0 && !isAnimating) return <div className="h-[250px]" />;
 
