@@ -1,6 +1,6 @@
 # Primo Game
 
-[Live DEMO](https://rick-and-morty-webapp-neon.vercel.app/)
+[Live DEMO](https://primo-game-webapp.vercel.app/)
 
 ## Installation Instructions
 
