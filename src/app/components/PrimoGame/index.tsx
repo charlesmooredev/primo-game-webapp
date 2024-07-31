@@ -68,7 +68,9 @@ export function PrimoGame() {
 
   useEffect(() => {
     if (containerRef.current) {
-      setContainerWidth(containerRef.current?.clientWidth || 0);
+      setInterval(() => {
+        setContainerWidth(containerRef.current?.clientWidth || 0);
+      }, 500);
     }
   }, []);
 

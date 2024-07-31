@@ -64,17 +64,18 @@ export function PrimoGameMotionCard({
         ref={containerRef}
       >
         <motion.div
-          className="h-[250px]"
+          className="h-[250px] flex items-center"
           initial={{ x: 0 }}
-          animate={{ x: targetX }}
+          animate={{ x: isAnimating ? targetX * 2 : targetX }}
           transition={{ duration: 1.5, ease: "easeInOut" }}
           onUpdate={handleUpdate}
           onAnimationComplete={animationCompleteFn}
           style={{
-            display: "flex",
-            width: `${totalWidth * 2}px`,
+            width: `${totalWidth * 3}px`,
           }}
         >
+          {children}
+          {children}
           {children}
         </motion.div>
       </div>
