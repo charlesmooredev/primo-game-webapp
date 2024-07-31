@@ -1,16 +1,18 @@
 import { PrimoResults } from "../../../helpers/primoGameRules.ts";
+import { useMemo } from "react";
 
 interface Props {
   results: PrimoResults | null;
-  prizeNumber: number;
 }
 
-export function PrimoGameResults({ results, prizeNumber }: Props) {
+export function PrimoGameResults({ results }: Props) {
+  const resultsCls = useMemo(() => {
+    return `${
+      results === PrimoResults.Won ? "text-green-500" : "text-red-500"
+    } font-semibold text-[2.0rem]`;
+  }, [results]);
+
   if (results === null) return;
 
-  return (
-    <div style={{ fontSize: "24px", fontWeight: "bold" }}>
-      {results} - {prizeNumber}
-    </div>
-  );
+  return <div className={resultsCls}>{results}</div>;
 }

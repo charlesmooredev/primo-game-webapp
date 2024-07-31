@@ -4,8 +4,8 @@ import { CaretDownFill, CaretUpFill } from "react-bootstrap-icons";
 import { primoPrizesArray } from "../../helpers/primoPrizes.tsx";
 import { PrimoGameResults } from "./PrimoGameResults";
 import {
-  itemWidth,
   PrimoResults,
+  prizeWidth,
   TIMER,
 } from "../../helpers/primoGameRules.ts";
 import { PrimoGameBlock } from "./PrimoGameBlock";
@@ -38,12 +38,12 @@ export function PrimoGame() {
     .map((num) => num.id)
     .indexOf(winningNumber);
 
-  const totalWidth = primoPrizesArray.length * itemWidth;
+  const totalWidth = primoPrizesArray.length * prizeWidth;
 
   const targetX = -(
-    (winningIndex + primoPrizesArray.length) * itemWidth -
+    (winningIndex + primoPrizesArray.length) * prizeWidth -
     containerWidth / 2 +
-    itemWidth / 2
+    prizeWidth / 2
   );
 
   return (
@@ -69,7 +69,7 @@ export function PrimoGame() {
           ].map((number, index) => (
             <Fragment key={index}>
               <PrimoGameBlock
-                itemWidth={itemWidth}
+                itemWidth={prizeWidth}
                 prizeNumber={number.id}
                 winningNumber={winningNumber}
                 isAnimating={isAnimating}
@@ -85,7 +85,7 @@ export function PrimoGame() {
           Play
         </button>
         {!isAnimating && result !== null && (
-          <PrimoGameResults results={result} prizeNumber={winningNumber} />
+          <PrimoGameResults results={result} />
         )}
       </div>
     </AppWrapper>
